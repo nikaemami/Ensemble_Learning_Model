@@ -16,11 +16,26 @@ Unlike majority voting, where each model has the same weights, we can increase t
 So in general, in ensemble methods, instead of learning a weak classifier, we learn **many weak classifiers** that are good at different parts of the input space.
 
 Before implementing the ensemble algorithm, I **preprocess** the data, since there is **missing data** in the columns.
-I replace the missing values with the **mean of the column**.
+I replace the missing values with the **mean of the column**:
 
-Then I process the dataset by implementing K-fold cross-validation with k = 10, using  **KFold(n_splits=10)**.
+```ruby
+data["Bare Nuclei"].replace({"?": Bare_Nuclei_mean}, inplace=True)
+```
+
+Then I process the dataset by implementing K-fold cross-validation with k = 10, using  **KFold(n_splits=10)** as below:
+
+```ruby
+kf = KFold(n_splits=10)
+```
 
 Now that the dataset is ready, I implement the Ensemble Learning algorithm with **Random Forest**, **SVM**, and **Logistic Regression** with voting classifier, using **VotingClassifier** in scikit-learn. 
+
+```ruby
+log_clf = LogisticRegression(solver="lbfgs", random_state=42)
+rnd_clf = RandomForestClassifier(n_estimators=100, random_state=42)
+svm_clf = SVC(gamma="scale", random_state=42)
+voting_clf = VotingClassifier(estimators=[('lr', log_clf), ('rf', rnd_clf), ('svc', svm_clf)])
+```
 
 Finally I report the **average accuracy** of the model. The result is as follows:
 
